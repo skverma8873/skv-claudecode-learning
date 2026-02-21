@@ -2,22 +2,28 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Repository Overview
+## Project
 
-This is an early-stage learning and experimentation repository for Claude Code (`@anthropic-ai/claude-code`). It is currently being used to explore Claude Code workflows and capabilities.
+**Pocket Heist** — a Next.js 16 app (React 19, TypeScript, Tailwind CSS v4). Starter project for the Claude Code Masterclass.
 
-## Setup
-
-Install Claude Code globally:
+## Commands
 
 ```bash
-npm install -g @anthropic-ai/claude-code
+npm install        # install dependencies
+npm run dev        # start dev server at http://localhost:3000
+npm run build      # production build
+npm run lint       # run ESLint
+npm run test       # run all tests (Vitest)
+npx vitest run tests/components/Navbar.test.tsx  # run a single test file
 ```
 
-## Workflow Notes
+## Architecture
 
-The file `ClaudeCommands.txt` documents a high-level development workflow used in this repo:
+The app uses the Next.js App Router with two route groups:
 
-1. **High Level Spec** — Define the feature or problem at a high level
-2. **Technical Plan** — Draft a technical implementation plan
-3. **Implement Feature** — Execute the plan using Claude Code
+- `app/(public)/` — unauthenticated pages: landing, login, signup, preview
+- `app/(dashboard)/` — authenticated pages behind a layout that includes the `Navbar`; contains heist list, detail (`[id]`), and create pages
+
+Shared UI components live in `components/` and are imported via the `@/` path alias (configured in `tsconfig.json`).
+
+Tests live in `tests/` and mirror the `components/` structure. Vitest runs in a jsdom environment with `@testing-library/react`.
