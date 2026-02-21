@@ -1,0 +1,12 @@
+High Level Spec
+Technical Plan
+Implement Feature
+
+Speckit from GitHub
+
+claude code:
+
+gAgNCq5Dqk4bAzTp4PYTo9pWj0LLRvEAJ62eCXzrz3MIdMGJ#Xo5zlJ8eTWuhUyhW20QIzOD8ogZLTnHl1xQf_NCFaMA
+
+npm install -g @anthropic-ai/claude-code
+
