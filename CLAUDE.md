@@ -4,7 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**Pocket Heist** — a Next.js 16 app (React 19, TypeScript, Tailwind CSS v4). Starter project for the Claude Code Masterclass.
+**Pocket Heist** — a Next.js 16 app. Starter project for the Claude Code Masterclass.
+
+## Key Technologies
+
+| Technology | Version | Purpose |
+|---|---|---|
+| Next.js | 16 | React framework with App Router |
+| React | 19 | UI library |
+| TypeScript | 5 | Type safety |
+| Tailwind CSS | 4 | Utility-first styling |
+| Vitest | 4 | Unit testing |
+| Testing Library | 16 | Component testing utilities |
+| ESLint | 9 | Linting |
+| Lucide React | 0.556 | Icon library |
 
 ## Commands
 
