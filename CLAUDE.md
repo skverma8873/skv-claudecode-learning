@@ -27,3 +27,37 @@ The app uses the Next.js App Router with two route groups:
 Shared UI components live in `components/` and are imported via the `@/` path alias (configured in `tsconfig.json`).
 
 Tests live in `tests/` and mirror the `components/` structure. Vitest runs in a jsdom environment with `@testing-library/react`.
+
+## Project Structure
+
+```
+├── app/
+│   ├── (dashboard)/
+│   │   ├── heists/
+│   │   │   ├── [id]/page.tsx       # heist detail page
+│   │   │   ├── create/page.tsx     # create heist page
+│   │   │   └── page.tsx            # heist list page
+│   │   └── layout.tsx              # dashboard layout (includes Navbar)
+│   ├── (public)/
+│   │   ├── login/page.tsx
+│   │   ├── preview/page.tsx
+│   │   ├── signup/page.tsx
+│   │   ├── page.tsx                # landing page
+│   │   └── layout.tsx
+│   ├── globals.css
+│   └── layout.tsx                  # root layout
+├── components/
+│   └── Navbar/
+│       ├── Navbar.tsx
+│       ├── Navbar.module.css
+│       └── index.ts
+├── public/
+│   └── skeleton.png
+├── tests/
+│   └── components/
+│       └── Navbar.test.tsx
+├── next.config.ts
+├── tsconfig.json
+├── vitest.config.mts
+└── vitest.setup.ts
+```
