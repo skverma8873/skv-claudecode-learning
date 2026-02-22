@@ -33,19 +33,45 @@ npx vitest run tests/components/Navbar.test.tsx  # run a single test file
 
 ## Architecture
 
+### Layout Hierarchy
+
+Next.js App Router nests layouts automatically. There are three layout levels:
+
+```
+app/layout.tsx                        ← Root layout (always rendered)
+├── app/(public)/layout.tsx           ← Public layout (no Navbar)
+│   ├── app/(public)/page.tsx         → /
+│   ├── app/(public)/login/page.tsx   → /login
+│   ├── app/(public)/signup/page.tsx  → /signup
+│   └── app/(public)/preview/page.tsx → /preview
+└── app/(dashboard)/layout.tsx        ← Dashboard layout (with Navbar)
+    └── app/(dashboard)/heists/
+        ├── page.tsx                  → /heists
+        ├── create/page.tsx           → /heists/create
+        └── [id]/page.tsx             → /heists/:id
+```
+
+**Root layout** (`app/layout.tsx`) — renders for every page. Sets `<html lang="en">`, imports `globals.css`, and provides the `<Metadata>` title/description. All other layouts nest inside its `<body>`.
+
+**Public layout** (`app/(public)/layout.tsx`) — wraps children in `<main className="public">`. The `.public` class in `globals.css` scopes `h1` to `text-4xl`, giving unauthenticated pages their larger heading style.
+
+**Dashboard layout** (`app/(dashboard)/layout.tsx`) — renders `<Navbar />` above `<main>{children}</main>`. Intended to be the authenticated shell; auth guard is not yet implemented.
+
 ### Routing
 
-The app uses the Next.js App Router with two route groups:
+Route groups `(public)` and `(dashboard)` are a Next.js convention — the parenthesised folder name is stripped from the URL, so they only affect which layout wraps a page, not the URL structure.
 
-- `app/(public)/` — unauthenticated pages (no Navbar):
-  - `/` — splash page (root `page.tsx`); intended to redirect to `/heists` when logged in, `/login` when not — auth routing not yet implemented
-  - `/login` — login form
-  - `/signup` — signup form
-  - `/preview` — UI component preview gallery
-- `app/(dashboard)/` — authenticated pages behind a layout that includes the `Navbar`:
-  - `/heists` — heist list (active, assigned, expired)
-  - `/heists/create` — create heist form
-  - `/heists/[id]` — dynamic heist detail page
+- `/` — splash page; comment in file notes it should redirect to `/heists` (logged in) or `/login` (logged out) — not yet implemented
+- `/login` — login form shell
+- `/signup` — signup form shell
+- `/preview` — staging area for new UI components before integration
+- `/heists` — lists active, assigned, and expired heists
+- `/heists/create` — form to create a new heist
+- `/heists/[id]` — dynamic segment; renders detail for a single heist by ID
+
+### Rendering Model
+
+All pages are **React Server Components** by default (Next.js 16). There are currently no `'use client'` directives, no API routes (`app/api/`), and no data fetching — all pages are placeholder shells. State management libraries (Redux, Zustand, etc.) are not used.
 
 ### Styling Architecture
 
