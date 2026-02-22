@@ -98,10 +98,15 @@ Example from `Navbar.module.css`:
 }
 ```
 
-Components apply module classes via the `styles` import and can mix in Tailwind utilities directly in JSX:
+Components apply module classes via the `styles` import. Use Tailwind utility classes inline in JSX for one-off styling needs rather than creating a CSS Module class:
 ```tsx
 import styles from "./Navbar.module.css"
+
+// Module class for reusable/complex styles:
 <div className={styles.siteNav}>
+
+// Inline Tailwind for one-off needs:
+<p className="text-sm mt-2 text-primary">...</p>
 ```
 
 ## Components
@@ -114,10 +119,17 @@ components/
 └── ComponentName/
     ├── ComponentName.tsx         # Component implementation
     ├── ComponentName.module.css  # Scoped CSS module (@reference globals.css at top)
-    └── index.ts                  # Barrel export: export { default } from "./ComponentName"
+    └── index.ts                  # Barrel export
 ```
 
-Import example: `import Navbar from "@/components/Navbar"`
+The `index.ts` barrel re-exports the default so consumers import from the folder, not the file:
+```ts
+// index.ts
+export { default } from "./ComponentName"
+
+// consumer
+import Navbar from "@/components/Navbar"   // resolves to index.ts → Navbar.tsx
+```
 
 **Current components:**
 - `Navbar` — site nav with logo, tagline, and links to `/heists` and `/heists/create`
