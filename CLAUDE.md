@@ -33,6 +33,8 @@ npx vitest run tests/components/Navbar.test.tsx  # run a single test file
 
 ## Architecture
 
+### Routing
+
 The app uses the Next.js App Router with two route groups:
 
 - `app/(public)/` — unauthenticated pages (no Navbar):
@@ -45,29 +47,14 @@ The app uses the Next.js App Router with two route groups:
   - `/heists/create` — create heist form
   - `/heists/[id]` — dynamic heist detail page
 
-## Components
+### Styling Architecture
 
-Shared UI components live in `components/` and are imported via the `@/` path alias (maps to the repo root, configured in `tsconfig.json`).
+Styling is layered across three levels, applied in order from broadest to most specific:
 
-**Each component follows a 3-file pattern:**
-```
-components/
-└── ComponentName/
-    ├── ComponentName.tsx      # Component implementation
-    ├── ComponentName.module.css  # Scoped CSS module
-    └── index.ts               # Barrel export: export { default } from "./ComponentName"
-```
+**1. Global Theme (`app/globals.css` — `@theme` block)**
 
-Import example: `import Navbar from "@/components/Navbar"`
+Design tokens defined as CSS custom properties via Tailwind v4's `@theme`. These become Tailwind utility classes automatically (e.g., `--color-primary` → `bg-primary`, `text-primary`).
 
-**Current components:**
-- `Navbar` — site nav with logo, tagline, and links to `/heists` and `/heists/create`
-
-## Design System
-
-Global styles and theme variables are defined in `app/globals.css` using Tailwind v4's `@theme` block.
-
-**Color tokens:**
 | Token | Value | Usage |
 |---|---|---|
 | `--color-primary` | `#C27AFF` | Purple — primary accent |
@@ -79,14 +66,61 @@ Global styles and theme variables are defined in `app/globals.css` using Tailwin
 | `--color-error` | `#FF6467` | Error states |
 | `--color-heading` | `white` | Headings |
 | `--color-body` | `#99A1AF` | Body text |
+| `--font-sans` | `'Inter'` | Body font (Google Fonts) |
 
-**Global utility classes (defined in `globals.css`):**
-- `.page-content` — centered content area with max-width (`w-6xl`, `min-w-2xl`)
-- `.center-content` — vertically centered flex column (`min-h-lvh`)
-- `.form-title` — centered, bold, `text-xl` heading for forms
-- `.public` on `<main>` — wraps unauthenticated pages; applies `text-4xl` to `h1`
+Base typography is also set here: `body` applies `font-sans text-body bg-dark`; headings apply `text-heading`.
 
-**CSS approach:** Tailwind v4 utility classes + CSS Modules for scoped component styles. Avoid plain CSS class names on global elements; use CSS Modules for component-specific styling.
+**2. Global Utility Classes (`app/globals.css` — below `@theme`)**
+
+Reusable layout and layout-helper classes for use directly in JSX:
+
+- `.page-content` — centered content area (`my-4 mx-auto w-6xl min-w-2xl max-w-full`)
+- `.center-content` — vertically centered flex column (`flex flex-col justify-center text-justify min-h-lvh`)
+- `.form-title` — centered bold heading for forms (`text-center text-xl font-bold`)
+- `.public h1` — scoped inside the public layout's `<main className="public">`, enlarges h1 to `text-4xl`
+
+**3. Component-Scoped Styles (CSS Modules)**
+
+Each component has a `ComponentName.module.css` file. To use Tailwind's `@apply` with custom theme tokens inside a CSS Module, the file must include:
+
+```css
+@reference "../../app/globals.css";
+```
+
+This gives the module access to the theme tokens without duplicating styles into the output. Without this line, `@apply bg-light` would fail because the custom token is unknown to the module's scope.
+
+Example from `Navbar.module.css`:
+```css
+@reference "../../app/globals.css";
+
+.siteNav {
+  @apply bg-light px-2 py-4;
+}
+```
+
+Components apply module classes via the `styles` import and can mix in Tailwind utilities directly in JSX:
+```tsx
+import styles from "./Navbar.module.css"
+<div className={styles.siteNav}>
+```
+
+## Components
+
+Shared UI components live in `components/` and are imported via the `@/` path alias (maps to the repo root, configured in `tsconfig.json`).
+
+**Each component follows a 3-file pattern:**
+```
+components/
+└── ComponentName/
+    ├── ComponentName.tsx         # Component implementation
+    ├── ComponentName.module.css  # Scoped CSS module (@reference globals.css at top)
+    └── index.ts                  # Barrel export: export { default } from "./ComponentName"
+```
+
+Import example: `import Navbar from "@/components/Navbar"`
+
+**Current components:**
+- `Navbar` — site nav with logo, tagline, and links to `/heists` and `/heists/create`
 
 ## Naming Conventions
 
